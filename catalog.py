@@ -1,29 +1,30 @@
 # -*- coding: utf-8 -*-
 
-base_url = ''
-html_doc = urlopen(base_url + '').read()
-soup = BeautifulSoup(html_doc)
-list_items = soup.find("div", {"class": "full"}).find("ul", {"class": "list"}).find_all("li")
-#print(list_items)
-#print(soup)
-for item in list_items:
-    link = item.find("a")
-    href = link.get("href")
-    title = link.find("div", {"class": "title"}).contents[0]
-    print( "\n")
-    print(href)
-    print( "\n")
-    print(title)
-    print( "\n")
-    
-    
-    
-    
-if(connection):
-    cursor.close()
-    connection.close()
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
 
-
-def openItem(link):
-    item_doc = urlopen(base_url + link).read()
-    item_soup = BeautifulSoup(html_doc)
+class Catalog:
+    
+    items_data = {}
+    
+        
+    def parseItems(self, soup):
+        
+        list_items = soup.find("div", {"class": "full"}).find("ul", {"class": "list"}).find_all("li")
+        
+        for item in list_items:
+            link = item.find("a")
+            href = link.get("href")
+            title = link.find("div", {"class": "title"}).contents[0]
+            self.items_data[title]=href
+        
+        
+        
+        
+    
+    
+    def writeItems(cursor):
+        sql = """INSERT INTO catalog(name,url)
+                 VALUES(%n,%u) RETURNING vendor_id;"""
+        for name,url in self.items_data:
+            cursor.execute(sql, (name,url))
