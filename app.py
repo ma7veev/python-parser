@@ -25,19 +25,27 @@ except IndexError:
 
 
 from connection import cursor
-
-
+from connection import connection
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+#cursor.execute("CREATE TABLE catalog(id serial PRIMARY KEY,name TEXT NOT NULL,url TEXT NOT NULL,status INTEGER NOT NULL DEFAULT 0);")
+cursor.execute("SELECT * FROM catalog;")
+record = cursor.fetchone()
+print(record)
+#sys.exit()
 base_url = env_settings['base_url']
 html_doc = urlopen(base_url + env_settings['catalog_url']).read()
-soup = BeautifulSoup(html_doc)
+soup = BeautifulSoup(html_doc, "html")
 
 parser.parseItems(soup)
-print(parser.items_data)
+parser.writeItems(connection)
+connection.commit()
+#print(parser.items_data)
 
 cursor.execute("SELECT version();")
 record = cursor.fetchone()
 
-print(record)
+#print(record)
 
 """
 if(connection):

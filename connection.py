@@ -24,4 +24,9 @@ try:
 except (Exception, psycopg2.Error) as error :
     print ("Error while connecting to PostgreSQL", error)
 
-       
+"""CREATE TABLE catalog(
+   id serial PRIMARY KEY,
+   name TEXT NOT NULL,
+   url TEXT NOT NULL,
+   status INTEGER NOT NULL DEFAULT 0
+);"""
