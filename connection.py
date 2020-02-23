@@ -30,3 +30,10 @@ except (Exception, psycopg2.Error) as error :
    url TEXT NOT NULL,
    status INTEGER NOT NULL DEFAULT 0
 );"""
+
+"""CREATE TABLE status(
+   last_catalog_page INTEGER NOT NULL DEFAULT 0,
+   last_catalog_url TEXT
+);
+INSERT INTO status (last_catalog_page, last_catalog_url) VALUES (0, '');
+"""

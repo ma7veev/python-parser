@@ -4,7 +4,15 @@
 class Catalog:
 
     items_data = []
+    paginator = 0
 
+    def getUrl(self, url):
+
+        if self.paginator != 0:
+            url = url + '/' + str(self.paginator)
+
+
+        return url
 
     def parseItems(self, soup):
 
@@ -14,17 +22,19 @@ class Catalog:
             link = item.find("a")
             href = link.get("href")
             title = link.find("div", {"class": "title"}).contents[0]
-            self.items_data.append((title, href, 1))
-
-
-
-
+            list = (str(title), str(href))
+            self.items_data.append(list)
 
 
     def writeItems(self, connection):
+        cursor = connection.cursor()
+        sql = "INSERT INTO catalog(name,url) VALUES (%s, %s)"
+        cursor.executemany(sql,self.items_data)
+        connection.commit()
 
-        values = ', '.join(map(str, self.items_data))
 
-        sql = "INSERT INTO catalog(name,url,status) VALUES{}".format(values)
-        connection.cursor().execute(sql)
+    def updateStatus(self, connection, last_page):
+        cursor = connection.cursor()
+        sql = "UPDATE status SET last_catalog_page = %s"
+        cursor.execute(sql, [last_page])
         connection.commit()
