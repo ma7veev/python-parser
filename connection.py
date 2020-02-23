@@ -32,8 +32,8 @@ except (Exception, psycopg2.Error) as error :
 );"""
 
 """CREATE TABLE status(
-   last_catalog_page INTEGER NOT NULL DEFAULT 0,
-   last_catalog_url TEXT
+   last_catalog_page INTEGER NOT NULL DEFAULT 9999,
+   last_catalog_url INTEGER
 );
-INSERT INTO status (last_catalog_page, last_catalog_url) VALUES (0, '');
+INSERT INTO status (last_catalog_page, last_catalog_url) VALUES (6089, NULL);
 """

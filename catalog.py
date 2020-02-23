@@ -5,6 +5,9 @@ class Catalog:
 
     items_data = []
     paginator = 0
+    connection = None
+    cursor = None
+    settings = []
 
     def getUrl(self, url):
 
@@ -26,15 +29,20 @@ class Catalog:
             self.items_data.append(list)
 
 
-    def writeItems(self, connection):
-        cursor = connection.cursor()
+    def writeItems(self):
         sql = "INSERT INTO catalog(name,url) VALUES (%s, %s)"
-        cursor.executemany(sql,self.items_data)
-        connection.commit()
+        self.cursor.executemany(sql,self.items_data)
+        self.connection.commit()
 
 
-    def updateStatus(self, connection, last_page):
-        cursor = connection.cursor()
+    def updateStatus(self):
         sql = "UPDATE status SET last_catalog_page = %s"
-        cursor.execute(sql, [last_page])
-        connection.commit()
+        self.cursor.execute(sql, [self.paginator])
+        self.connection.commit()
+
+    def setConnection(self, connection):
+        self.connection = connection
+        self.cursor = connection.cursor()
+
+    def setSettings(self, settings):
+        self.settings = settings
