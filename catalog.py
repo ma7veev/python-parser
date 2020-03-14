@@ -46,3 +46,10 @@ class Catalog:
 
     def setSettings(self, settings):
         self.settings = settings
+
+    def checkCaptcha(self, soup):
+        captcha = soup.find("div", {"class": "g-recaptcha"})
+        if captcha is None:
+            return False
+        else:
+            return True

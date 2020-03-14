@@ -26,7 +26,7 @@ try:
         from item import *
         parser = Item()
         url = env_settings['item_url']
-        last_page = status[1]
+        last_page = status[1] if status else None
         if last_page  is  None:
             cursor.execute("SELECT max(id) FROM catalog WHERE status = 0;")
             id = cursor.fetchone()
@@ -54,13 +54,16 @@ while i > 0:
     next_url = parser.getUrl(url)
     print(next_url)
     html_doc = urlopen(base_url + next_url).read()
-    soup = BeautifulSoup(html_doc, "html.parser")
 
+    soup = BeautifulSoup(html_doc, "html.parser")
+    if parser.checkCaptcha(soup):
+        print("CAPTCHA ERROR!")
+        sys.exit()
     parser.parseItems(soup)
 
     parser.writeItems()
     parser.items_data =[]
-    parser.updateStatus(i)
+    parser.updateStatus()
 
     i -= 1
 

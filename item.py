@@ -17,17 +17,32 @@ class Item:
         return item[0] if item else None
 
 
-    def parseItems(self, url):
-        # TODO parse description or tags here
+    def parseItems(self, soup):
+        source_tag = soup.find("meta", {"name": "citation_journal_title"})
+        source = source_tag.get("content") if source_tag else None
 
         href = self.item[0] + '/pdf'
-        self.items_data.append((str(href), str(self.item[1])))
+        self.items_data.append([str(href), str(self.item[1]), str(source)])
 
 
     def writeItems(self):
         import urllib.request
         g = urllib.request.urlopen(self.settings['base_url']+ self.items_data[0][0])
-        name = 'files/'+self.item[1] + '.pdf'
+
+        name = self.item[1]
+        name = name[0:125]
+        name = name.replace('/', '_')
+
+        source = self.items_data[0][2] if self.items_data[0][2] else 'main'
+        source = source[0:125]
+        source = source.replace('/', '_')
+        print(source)
+        dir = self.settings['saving_folder']+source
+
+        from pathlib import Path
+        Path(dir).mkdir(parents=True, exist_ok=True)
+
+        name = dir +'/'+name + '.pdf'
         with open(name, 'b+w') as f:
             f.write(g.read())
 
@@ -46,3 +61,13 @@ class Item:
 
     def setSettings(self, settings):
         self.settings = settings
+
+
+    def checkCaptcha(self, soup):
+        captcha = soup.find("div", {"class": "g-recaptcha"})
+        if captcha is None:
+            return False
+        else:
+            return True
+
+   # def parseTags(self, soup):
